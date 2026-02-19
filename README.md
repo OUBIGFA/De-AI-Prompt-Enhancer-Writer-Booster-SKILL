@@ -1,24 +1,73 @@
-> <https://github.com/op7418/Humanizer-zh>
+# De-AI Prompt Enhancer & Writer Booster SKILL
 
-根据这个仓库进行的提示词升级优化
+一套中文去 AI 味提示词，打包成 SKILL 格式，适用于 Claude Code、Cursor、Windsurf 等支持 SKILL 调用的工具。核心做的事情就两件：把 AI 生成的中文改得不像 AI 写的，以及复现一个真实作者的写作风格。
+
+> 上游仓库：<https://github.com/op7418/Humanizer-zh>
+>
+> 根据这个仓库进行的提示词升级优化
 
 ***
 
 相同的AI每次的效果都不同，不同的AI相互之间的效果也不同。不是百分百去除AI味，只是追求最大限度地去除AI味，让AI生成的内容更耐读。
 
+## 这套东西有什么
+
+提示词从 7 篇真实作者文章里提炼写作特征，不是泛泛的"写好中文"指南。具体包括：两套写作模式（`good-writing` 复现作者风格，`de-AI-writing` 做去 AI 味补丁）；一个 24 项 AI 痕迹检测体系；一整套量化的风格约束——七大铁律、段落谱系、句式节奏、标点预算都有硬指标；支持从零生成、改写、翻译（结构保真）、审阅、精修五种任务；另外还附带了 `style_audit.js` 和 `style-lint.ps1` 两个自动化风格审计脚本。
+
+## 两种模式
+
 ---
 
-> 此版本对“我”的使用十分克制，适合非第一人称的文字内容
-
-通用版以`de-AI-writing`为准，其他旧文件已移入`backup`，喜欢旧风格的可继续使用。
-
----
 > 此版本适合观点表达类的文字内容
 
-可参考`good-writing`样式自行迭代自己的专属写作风格。
+**good-writing** 是一个作者风格复现引擎。它从 `.writer/` 目录下的 7 篇原始文章中提取写作 DNA，试图精确复现那位作者的笔力：半文半白的用词、长短交替的句式节奏、类比先行的论证、冷面热心的情感表达、知识分子式的第一人称介入。可参考 `good-writing` 样式自行迭代自己的专属写作风格。
 
 ---
 
+> 此版本对"我"的使用十分克制，适合非第一人称的文字内容
+
+**de-AI-writing** 在 `good-writing` 的风格底座上叠加了一层反模板硬约束。它默认执行保真改写——不增删核心信息，只做语言和句式修补。禁用"而是"及其变体，禁用协作路标词，严格控制冒号和二人称用量。适合信息综述、科普、翻译这类不需要强烈作者视角的内容。通用版以 `de-AI-writing` 为准，其他旧文件已移入 `backup`，喜欢旧风格的可继续使用。
+
+## 目录结构
+
+```
+├── good-writing/              # 作家风格复现引擎
+│   ├── SKILL.md               # 主技能文件（七大铁律 + 工作流）
+│   └── references/
+│       ├── ai-trace-detector.md       # 24项AI痕迹检测器
+│       ├── translation-guardrails.md  # 翻译护栏规则
+│       └── writing-samples.md         # 标注范例库（7篇原文精选片段）
+├── de-AI-writing/             # 去AI味补丁模式
+│   ├── SKILL.md               # 主技能文件（反模板硬约束）
+│   ├── references/
+│   │   ├── translation-guardrails.md  # 翻译护栏规则
+│   │   └── writing-samples.md         # 标注范例库
+│   └── tools/
+│       └── style-lint.ps1     # PowerShell 风格检测脚本
+├── .writer/                   # 原始参考文章（风格DNA来源，7篇）
+├── .backup/                   # 旧版本提示词备份
+├── scripts/
+│   └── style_audit.js         # Node.js 风格审计脚本
+└── example/                   # 效果案例截图
+```
+
+## 怎么用
+
+把 `good-writing` 或 `de-AI-writing` 文件夹放进你的项目目录，支持 SKILL 的工具会自动识别 `SKILL.md` 文件。在对话中提到写作、改写、风格、润色、翻译这类词，对应的技能就会被激活。
+
+想基于自己的文风来做，也不难：准备 5–7 篇能代表你写作习惯的文章放进 `.writer/` 目录，参照 `good-writing/references/writing-samples.md` 的格式提取风格特征，再改 `good-writing/SKILL.md` 里的风格铁律就行。
+
+风格审计脚本的用法：
+
+```bash
+# Node.js 风格审计（检查 .test/ 和 SKILL 目录下的 .md 文件）
+node scripts/style_audit.js
+
+# PowerShell 风格检测（检查单个文件）
+pwsh de-AI-writing/tools/style-lint.ps1 -Path "你的文件.md"
+```
+
+## 效果展示
 
 |                                            案例一：good-writing 模式                                              |
 | :----------------------------------------------------------------------------------------------------: |
