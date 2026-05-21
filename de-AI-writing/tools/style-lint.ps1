@@ -64,6 +64,28 @@ $patterns = [ordered]@{
         (U "\u597d\u6bd4") + "|" +
         (U "\u72b9\u5982")
     )
+    "pseudo_candor" = (
+        (U "\u76f4\u767d") + "|" +
+        (U "\u5766\u767d") + "|" +
+        (U "\u5766\u7387") + "|" +
+        (U "\u65e0\u906e\u62e6") + "|" +
+        (U "\u660e\u767d\u65e0\u8bef") + "|" +
+        (U "\u6beb\u4e0d\u542b\u7cca") + "|" +
+        (U "\u8d64\u88f8") + "|" +
+        (U "\u4e0d\u52a0\u63a9\u9970") + "|" +
+        (U "\u4e0d\u5bb9\u56de\u907f")
+    )
+    "pseudo_rigor" = (
+        (U "\u4e25\u8c28") + "|" +
+        (U "\u4e25\u5bc6") + "|" +
+        (U "\u4e25\u82db") + "|" +
+        (U "\u4e25\u683c") + "|" +
+        (U "\u7cbe\u51c6") + "|" +
+        (U "\u5ba1\u614e") + "|" +
+        (U "\u514b\u5236") + "|" +
+        (U "\u6c89\u7a33") + "|" +
+        (U "\u4ece\u5bb9")
+    )
     "double_adj" = (
         (U "\u800c\u53c8")
     )
@@ -164,6 +186,28 @@ Write-Output "  Count: $metaphorCount"
 if ($metaphorCount -gt 0) {
     $metaphorHits = Select-String -LiteralPath $Path -Pattern $metaphorPattern
     $metaphorHits | ForEach-Object { Write-Output ("  L{0}: {1}" -f $_.LineNumber, $_.Line.Trim()) }
+}
+
+# Pseudo-candor evaluative adverbs (rough screen)
+Write-Output ""
+$pseudoCandorPattern = $patterns["pseudo_candor"]
+$pseudoCandorCount = ([regex]::Matches($text, $pseudoCandorPattern)).Count
+Write-Output "--- Pseudo-Candor Markers (rough screen) ---"
+Write-Output "  Count: $pseudoCandorCount"
+if ($pseudoCandorCount -gt 0) {
+    $pseudoCandorHits = Select-String -LiteralPath $Path -Pattern $pseudoCandorPattern
+    $pseudoCandorHits | ForEach-Object { Write-Output ("  L{0}: {1}" -f $_.LineNumber, $_.Line.Trim()) }
+}
+
+# Pseudo-rigor evaluative adjectives (rough screen)
+Write-Output ""
+$pseudoRigorPattern = $patterns["pseudo_rigor"]
+$pseudoRigorCount = ([regex]::Matches($text, $pseudoRigorPattern)).Count
+Write-Output "--- Pseudo-Rigor Markers (rough screen) ---"
+Write-Output "  Count: $pseudoRigorCount"
+if ($pseudoRigorCount -gt 0) {
+    $pseudoRigorHits = Select-String -LiteralPath $Path -Pattern $pseudoRigorPattern
+    $pseudoRigorHits | ForEach-Object { Write-Output ("  L{0}: {1}" -f $_.LineNumber, $_.Line.Trim()) }
 }
 
 # Double adjective "A而又B"
