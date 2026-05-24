@@ -62,7 +62,10 @@ $patterns = [ordered]@{
         (U "\u5982\u540c") + "|" +
         (U "\u4eff\u4f5b") + "|" +
         (U "\u597d\u6bd4") + "|" +
-        (U "\u72b9\u5982")
+        (U "\u72b9\u5982") + "|" +
+        (U "\u8d26\u672c") + "|" +
+        (U "\u6210\u7ee9\u5355") + "|" +
+        (U "\u6e05\u5355")
     )
     "pseudo_candor" = (
         (U "\u76f4\u767d") + "|" +
@@ -170,13 +173,11 @@ Write-Output ""
 $dashPattern = U "\u2014\u2014"
 $dashHits = Select-String -LiteralPath $Path -Pattern $dashPattern
 $dashCount = ([regex]::Matches($text, $dashPattern)).Count
-if ($dashCount -gt 3) {
-    Write-Output "--- Dash Warning (>3 occurrences: $dashCount) ---"
-    if ($dashHits) {
-        $dashHits | ForEach-Object { Write-Output ("  L{0}: {1}" -f $_.LineNumber, $_.Line.Trim()) }
-    }
+$dashLineHits = @($dashHits | Where-Object { $_.Line.TrimStart() -match "^——" })
+if ($dashLineHits.Count -gt 0) {
+    Write-Output "--- Dash Style Warning (dash used like list marker: $($dashLineHits.Count)) ---"
+    $dashLineHits | ForEach-Object { Write-Output ("  L{0}: {1}" -f $_.LineNumber, $_.Line.Trim()) }
 }
-
 # Metaphor marker lines (rough screen)
 Write-Output ""
 $metaphorPattern = $patterns["metaphor_markers"]
@@ -244,7 +245,7 @@ if ($shortParagraphCount -ge 4) { $issues += "short paragraphs ($shortParagraphC
 $exclCount = ([regex]::Matches($text, $exclChar)).Count
 if ($exclCount -gt 2) { $issues += "exclamation marks $exclCount > 2" }
 
-if ($dashCount -gt 3) { $issues += "dashes $dashCount > 3" }
+if ($dashLineHits.Count -gt 0) { $issues += "dash used like list marker $($dashLineHits.Count)" }
 
 $roadmarkCount = ([regex]::Matches($text, $patterns["roadmark_terms"])).Count
 if ($roadmarkCount -gt 2) { $issues += "roadmark terms $roadmarkCount > 2" }
