@@ -3,8 +3,8 @@
 
 # 仅允许同步以下四个目录及其全部内容。
 !README.md
-!de-AI-writing/
-!de-AI-writing/**
+!de-ai-writing/
+!de-ai-writing/**
 !good-writing/
 !good-writing/**
 !example/
